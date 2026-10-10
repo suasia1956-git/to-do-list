@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A state-driven To-Do List application with full CRUD, localStorage persistence, and advanced filtering.">
+    <title>TaskFlow — Smart Task Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app" id="app">
+        <!-- ===== HEADER ===== -->
+        <header class="app-header" id="app-header">
+            <div class="header__left">
+                <div class="logo" id="logo">
+                    <span class="logo__icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                    </span>
+                    <h1 class="logo__text">Task<span class="logo__accent">Flow</span></h1>
+                </div>
+            </div>
+            <div class="header__right">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+                    <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <main class="main">
+            <!-- Hero / Greeting -->
+            <section class="hero" id="hero-section">
+                <div class="hero__content">
+                    <p class="hero__greeting" id="greeting-text">Good Evening 👋</p>
+                    <h2 class="hero__title">What's on your mind today?</h2>
+                </div>
+            </section>
+
+            <!-- Add Task Input -->
+            <section class="add-task" id="add-task-section">
+                <form class="add-task__form" id="add-task-form">
+                    <div class="add-task__input-wrapper">
+                        <svg class="add-task__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="16"></line>
+                            <line x1="8" y1="12" x2="16" y2="12"></line>
+                        </svg>
+                        <input 
+                            type="text" 
+                            class="add-task__input" 
+                            id="task-input" 
+                            placeholder="Add a new task..." 
+                            autocomplete="off"
+                            maxlength="200"
+                            required
+                        >
+                        <button type="submit" class="add-task__btn" id="add-task-btn" title="Add task">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Filter Bar -->
+            <section class="filter-bar" id="filter-bar">
+                <div class="filter-bar__tabs">
+                    <button class="filter-btn active" data-filter="all" id="filter-all">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="3" width="7" height="7"></rect>
+                            <rect x="14" y="14" width="7" height="7"></rect>
+                            <rect x="3" y="14" width="7" height="7"></rect>
+                        </svg>
+                        All
+                        <span class="filter-btn__count" id="count-all">0</span>
+                    </button>
+                    <button class="filter-btn" data-filter="active" id="filter-active">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                        </svg>
+                        Active
+                        <span class="filter-btn__count" id="count-active">0</span>
+                    </button>
+                    <button class="filter-btn" data-filter="completed" id="filter-completed">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        Completed
+                        <span class="filter-btn__count" id="count-completed">0</span>
+                    </button>
+                </div>
+                <button class="clear-completed-btn" id="clear-completed-btn" title="Clear completed tasks">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                    Clear Done
+                </button>
+            </section>
+
+            <!-- Task List -->
+            <section class="task-list-section" id="task-list-section">
+                <ul class="task-list" id="task-list">
+                    <!-- Tasks are dynamically rendered here -->
+                </ul>
+
+                <!-- Empty State -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-state__icon">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                        </svg>
+                    </div>
+                    <h3 class="empty-state__title" id="empty-state-title">No tasks yet</h3>
+                    <p class="empty-state__text" id="empty-state-text">Add your first task above to get started!</p>
+                </div>
+            </section>
+
+            <!-- Stats Footer -->
+            <section class="stats-bar" id="stats-bar">
+                <div class="stats-bar__item">
+                    <span class="stats-bar__number" id="stat-total">0</span>
+                    <span class="stats-bar__label">Total</span>
+                </div>
+                <div class="stats-bar__divider"></div>
+                <div class="stats-bar__item">
+                    <span class="stats-bar__number stats-bar__number--active" id="stat-active">0</span>
+                    <span class="stats-bar__label">Active</span>
+                </div>
+                <div class="stats-bar__divider"></div>
+                <div class="stats-bar__item">
+                    <span class="stats-bar__number stats-bar__number--done" id="stat-done">0</span>
+                    <span class="stats-bar__label">Done</span>
+                </div>
+                <div class="stats-bar__divider"></div>
+                <div class="stats-bar__item">
+                    <div class="stats-bar__progress-ring">
+                        <svg viewBox="0 0 36 36" class="progress-ring" id="progress-ring">
+                            <path class="progress-ring__bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="progress-ring__fill" id="progress-ring-fill" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke-dasharray="0, 100" />
+                        </svg>
+                        <span class="progress-ring__text" id="progress-percent">0%</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
